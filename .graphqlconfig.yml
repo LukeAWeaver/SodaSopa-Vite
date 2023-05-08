@@ -1,0 +1,18 @@
+projects:
+  SodaGQLAPI-routing:
+    schemaPath: src/graphql/schema.json
+    includes:
+      - src/graphql/**/*.ts
+    excludes:
+      - ./amplify/**
+    extensions:
+      amplify:
+        codeGenTarget: typescript
+        generatedFileName: src/API.ts
+        docsFilePath: src/graphql
+        region: us-east-2
+        apiId: p2l3ghmc6vautgkdbvoa6p26fi
+        maxDepth: 2
+extensions:
+  amplify:
+    version: 3
