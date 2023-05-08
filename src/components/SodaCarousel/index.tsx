@@ -29,13 +29,14 @@ const SodaCarouselWrapper = styled.div<SodaCarouselWrapperProps>`
 
 /* returns a number expressing where on a bell curve this would land where the selected
   where relativeIndex is how far from the selectedIndex we are*/
-const getGaussianBellCurvePosition = (
-  magnitude: number,
-  offSet: number,
-  spread: number,
-): number => {
-  return magnitude * Math.exp(-Math.pow(offSet, 2) / (2 * Math.pow(spread, 2)));
-};
+const getGaussianBellCurvePosition = useCallback(
+  (magnitude: number, offSet: number, spread: number): number => {
+    return (
+      magnitude * Math.exp(-Math.pow(offSet, 2) / (2 * Math.pow(spread, 2)))
+    );
+  },
+  [],
+);
 
 const getReservedWidth = (
   listLength: number,
@@ -112,8 +113,8 @@ const StyledSodaCard = styled(SodaCard)<StyledSodaCardProps>`
       return transform;
     }};
 
-    transition: transform 0.4s ease, width 0.4s ease, opacity 0.3s,
-      font-size 0.4s ease;
+    transition: transform 0.2s ease-out, width 0.2s ease-out,
+      opacity 0.2s ease-out, font-size 0.2s ease-out;
   }
 `;
 
@@ -188,11 +189,11 @@ const SodaCarousel: React.FC<SodaCarouselProps> = (
     [sodaList, selectedIndex],
   );
 
-  const handleDrag = (relativeIndex: number, mx: number) => {
+  const handleDrag = useCallback((relativeIndex: number, mx: number) => {
     setDragAmount(mx);
-  };
+  }, []);
 
-  const getDeltaX = (draggedIndex: number) => {
+  const getDeltaX = useCallback((draggedIndex: number) => {
     let xOffSet = draggedIndex;
     if (draggedIndex !== 0 && Math.abs(draggedIndex) > listLength / 2) {
       xOffSet = listLength - Math.abs(draggedIndex);
@@ -202,28 +203,31 @@ const SodaCarousel: React.FC<SodaCarouselProps> = (
       xOffSet = 0;
     }
     return xOffSet;
-  };
+  }, []);
 
-  const getNearPercentage = (selectedIndexOffset: number, spread: number) => {
-    if (selectedIndexOffset > listLength / 2) {
-      selectedIndexOffset = listLength - selectedIndexOffset;
-    }
+  const getNearPercentage = useCallback(
+    (draggedRelativeIndex: number, spread: number) => {
+      if (draggedRelativeIndex > listLength / 2) {
+        draggedRelativeIndex = listLength - draggedRelativeIndex;
+      }
 
-    const nearPercentage = getGaussianBellCurvePosition(
-      100,
-      selectedIndexOffset,
-      spread,
-    );
-    return nearPercentage;
-  };
+      const nearPercentage = getGaussianBellCurvePosition(
+        100,
+        draggedRelativeIndex,
+        spread,
+      );
+      return nearPercentage;
+    },
+    [],
+  );
 
-  const getDeltaY = (draggedIndex: number) => {
+  const getDeltaY = useCallback((draggedIndex: number) => {
     let yOffSet = Math.abs(draggedIndex);
     if (yOffSet > listLength / 2) {
       yOffSet = listLength - yOffSet;
     }
     return yOffSet;
-  };
+  }, []);
 
   return (
     <Container carouselWidth={carouselWidth}>
@@ -244,10 +248,6 @@ const SodaCarousel: React.FC<SodaCarouselProps> = (
             );
             const draggedRelativeIndex = draggedIndex - selectedIndex;
 
-            // const width = useMemo(
-            //   () => getReservedWidth(listLength, 25, draggedIndex),
-            //   [listLength, hudWidth, draggedIndex],
-            // );
             const yOffSet = getDeltaY(draggedIndex);
             const xOff = getDeltaX(draggedIndex) * 2;
             const nearPercentage = getNearPercentage(
@@ -255,15 +255,13 @@ const SodaCarousel: React.FC<SodaCarouselProps> = (
               spread,
             );
             const width = 3 * nearPercentage;
-            console.log(width);
-            const opacityBase = 25;
-            const opacityValue = `${Math.max(opacityBase, nearPercentage)}%`;
-            const xCenter = hudWidth / 2 - width / 4;
+            const opacityValue = `${nearPercentage}%`;
+            const xCenter = hudWidth / 2 - width / 2;
             let dir = 1;
             if (draggedIndex !== 0 && Math.abs(draggedIndex) > listLength / 2) {
               dir = draggedIndex > 0 ? -1 : 1;
             }
-
+            // if (index == 2) debugger;
             const x = xCenter + xOff * dir * (width / 2);
 
             const y = -330 - 80 * yOffSet;

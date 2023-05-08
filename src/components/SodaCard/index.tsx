@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Soda } from "@/types/soda";
 import styled from "styled-components";
 import { Vector2, useDrag } from "@use-gesture/react"; // Import the useDrag hook
@@ -37,20 +37,21 @@ const SodaCard: React.FC<SodaCardProps> = ({
 }) => {
   const [dragging, setDragging] = React.useState(false);
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     if (!dragging) onSodaClick();
-  };
+  }, [dragging, onSodaClick]);
 
-  const handleDrag = ({ movement: [mx] }: { movement: Vector2 }) => {
-    onSodaDrag(relativeIndex, mx);
-  };
+  const handleDrag = useCallback(
+    ({ movement: [mx] }: { movement: Vector2 }) => {
+      onSodaDrag(relativeIndex, mx);
+    },
+    [onSodaDrag, relativeIndex],
+  );
 
-  const handleDragEnd = () => {
-    console.log("DROPPED");
+  const handleDragEnd = useCallback(() => {
     setDragAmount(0);
-    // setSelectedIndex(relativeIndex);
     setDragging(false);
-  };
+  }, [setDragAmount]);
 
   const bind = useDrag(({ down, movement: [mx, _] }) => {
     if (down) {
