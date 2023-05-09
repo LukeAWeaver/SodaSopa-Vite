@@ -6,68 +6,22 @@ import { setSoda } from "@/store/sodaSlice";
 import { useDispatch } from "react-redux";
 import { ArrowButton } from "@/components/Button";
 import { DndContext } from "@dnd-kit/core";
+import {
+  paginateLeft,
+  paginateRight,
+  getGaussianBellCurvePosition,
+  getdraggedIndex,
+} from "@/utils/SodaCarousel";
 
+// Define prop interfaces
 interface ContainerProps {
   carouselWidth: number;
 }
 
-const Container = styled.div<ContainerProps>`
-  align-items: center;
-  height: 100%;
-  display: flex;
-  width: ${({ carouselWidth }) => `${carouselWidth}px`};
-`;
-
 interface SodaCarouselWrapperProps {
   hudWidth: number;
 }
-const SodaCarouselWrapper = styled.div<SodaCarouselWrapperProps>`
-  position: relative;
-  height: 100%;
-  width: ${({ hudWidth }) => `${hudWidth}px`};
-`;
 
-/* returns a number expressing where on a bell curve this would land where the selected
-  where relativeIndex is how far from the selectedIndex we are*/
-const getGaussianBellCurvePosition = useCallback(
-  (magnitude: number, offSet: number, spread: number): number => {
-    return (
-      magnitude * Math.exp(-Math.pow(offSet, 2) / (2 * Math.pow(spread, 2)))
-    );
-  },
-  [],
-);
-
-const getReservedWidth = (
-  listLength: number,
-  hudWidth: number,
-  relativeIndex: number,
-): number => {
-  const spread = 1;
-  let offSet = Math.abs(relativeIndex);
-  if (offSet > listLength / 2) {
-    offSet = listLength - offSet;
-  }
-
-  const width = getGaussianBellCurvePosition(hudWidth, offSet, spread);
-
-  return width;
-};
-
-const getdraggedIndex = (
-  dragAmount: number,
-  hudWidth: number,
-  index: number,
-) => {
-  const direction = dragAmount > 0 ? 1 : -1;
-  const drag = Math.abs(dragAmount);
-  const dragLimit = hudWidth / 2;
-  const currentDrag = drag < dragLimit ? drag : dragLimit;
-  const dragRatio = currentDrag / dragLimit; // 0 - 1 based on
-  const draggedIndex = index + dragRatio * direction;
-
-  return draggedIndex;
-};
 interface StyledSodaCardProps extends SodaCardProps {
   relativeIndex: number;
   listLength: number;
@@ -83,6 +37,27 @@ interface StyledSodaCardProps extends SodaCardProps {
   transform: string;
   opacity: string;
 }
+
+export interface SodaCarouselProps {
+  carouselWidth: number;
+  sodaList: Soda[];
+  listLength: number;
+}
+
+// Define styled components
+const Container = styled.div<ContainerProps>`
+  align-items: center;
+  height: 100%;
+  display: flex;
+  width: ${({ carouselWidth }) => `${carouselWidth}px`};
+`;
+
+const SodaCarouselWrapper = styled.div<SodaCarouselWrapperProps>`
+  position: relative;
+  height: 100%;
+  width: ${({ hudWidth }) => `${hudWidth}px`};
+`;
+
 const StyledSodaCard = styled(SodaCard)<StyledSodaCardProps>`
   && {
     border-radius: 8px;
@@ -128,21 +103,24 @@ const MemoizedStyledSodaCard = React.memo(
   },
 );
 
-export interface SodaCarouselProps {
-  carouselWidth: number;
-  sodaList: Soda[];
-  listLength: number;
-}
-
-const SodaCarousel: React.FC<SodaCarouselProps> = (
-  props: SodaCarouselProps,
-) => {
+// SodaCarousel component
+const SodaCarousel: React.FC<SodaCarouselProps> = ({
+  carouselWidth,
+  sodaList,
+  listLength,
+}) => {
+  // State hooks
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [dragAmount, setDragAmount] = useState<number>(0);
+
+  // Redux dispatch hook
   const dispatch = useDispatch();
-  const { carouselWidth, sodaList, listLength } = props;
+
+  // Define derived constants
   const hudWidth = carouselWidth * 0.9;
   const arrowWidth = carouselWidth * 0.05;
+
+  // Define memoized callbacks
   const handleSodaClick = useCallback(
     (sodaList: Soda[], selectedSoda: Soda) => {
       if (!sodaList) {
@@ -156,18 +134,6 @@ const SodaCarousel: React.FC<SodaCarouselProps> = (
     },
     [],
   );
-
-  const paginateLeft = (selectedIndex: number, length: number) => {
-    const attemptedIndex = selectedIndex - 1;
-    if (attemptedIndex < 0) return length - 1;
-    return attemptedIndex;
-  };
-
-  const paginateRight = (selectedIndex: number, length: number) => {
-    const attemptedIndex = selectedIndex + 1;
-    if (attemptedIndex == length) return 0;
-    return attemptedIndex;
-  };
 
   const updateSelectedSoda = (newIndex: number) => {
     setSelectedIndex(newIndex);
@@ -205,6 +171,13 @@ const SodaCarousel: React.FC<SodaCarouselProps> = (
     return xOffSet;
   }, []);
 
+  const getDeltaY = useCallback((draggedIndex: number) => {
+    let yOffSet = Math.abs(draggedIndex);
+    if (yOffSet > listLength / 2) {
+      yOffSet = listLength - yOffSet;
+    }
+    return yOffSet;
+  }, []);
   const getNearPercentage = useCallback(
     (draggedRelativeIndex: number, spread: number) => {
       if (draggedRelativeIndex > listLength / 2) {
@@ -220,14 +193,56 @@ const SodaCarousel: React.FC<SodaCarouselProps> = (
     },
     [],
   );
+  // Helper function to generate soda card
+  const generateSodaCard = useCallback(
+    (soda: Soda, index: number) => {
+      const spread = 1;
+      const relativeIndex = index - selectedIndex;
 
-  const getDeltaY = useCallback((draggedIndex: number) => {
-    let yOffSet = Math.abs(draggedIndex);
-    if (yOffSet > listLength / 2) {
-      yOffSet = listLength - yOffSet;
-    }
-    return yOffSet;
-  }, []);
+      const draggedIndex = useMemo(
+        () => getdraggedIndex(dragAmount, hudWidth, index),
+        [dragAmount, hudWidth, index, listLength],
+      );
+      const draggedRelativeIndex = draggedIndex - selectedIndex;
+
+      const yOffSet = getDeltaY(draggedIndex);
+      const xOff = getDeltaX(draggedIndex) * 2;
+      const nearPercentage = getNearPercentage(draggedRelativeIndex, spread);
+      const width = 3 * nearPercentage;
+      const opacityValue = `${nearPercentage}%`;
+      const xCenter = hudWidth / 2 - width / 2;
+      let dir = 1;
+      if (draggedIndex !== 0 && Math.abs(draggedIndex) > listLength / 2) {
+        dir = draggedIndex > 0 ? -1 : 1;
+      }
+      const x = xCenter + xOff * dir * (width / 2);
+
+      const y = -330 - 80 * yOffSet;
+      const transformValue = `translateX(${x}px) translateY(${y}px)`;
+      return (
+        <MemoizedStyledSodaCard
+          key={soda._id}
+          soda={soda}
+          relativeIndex={relativeIndex}
+          listLength={listLength}
+          isSelected={index == selectedIndex}
+          selectedIndex={selectedIndex}
+          hudWidth={50}
+          index={index}
+          onSodaClick={() => handleSodaClick(sodaList, soda)}
+          randomColor={soda.randomColor}
+          onSodaDrag={handleDrag}
+          dragAmount={dragAmount}
+          setDragAmount={setDragAmount}
+          updateSelectedSoda={updateSelectedSoda}
+          opacity={opacityValue}
+          width={width}
+          transform={`${transformValue}`}
+        />
+      );
+    },
+    [selectedIndex, dragAmount, hudWidth, listLength],
+  );
 
   return (
     <Container carouselWidth={carouselWidth}>
@@ -237,58 +252,7 @@ const SodaCarousel: React.FC<SodaCarouselProps> = (
         direction="left"
       />
       <SodaCarouselWrapper hudWidth={hudWidth}>
-        <DndContext>
-          {sodaList?.map((soda, index) => {
-            const spread = 1;
-            const relativeIndex = index - selectedIndex;
-
-            const draggedIndex = useMemo(
-              () => getdraggedIndex(dragAmount, hudWidth, index),
-              [dragAmount, hudWidth, index, listLength],
-            );
-            const draggedRelativeIndex = draggedIndex - selectedIndex;
-
-            const yOffSet = getDeltaY(draggedIndex);
-            const xOff = getDeltaX(draggedIndex) * 2;
-            const nearPercentage = getNearPercentage(
-              draggedRelativeIndex,
-              spread,
-            );
-            const width = 3 * nearPercentage;
-            const opacityValue = `${nearPercentage}%`;
-            const xCenter = hudWidth / 2 - width / 2;
-            let dir = 1;
-            if (draggedIndex !== 0 && Math.abs(draggedIndex) > listLength / 2) {
-              dir = draggedIndex > 0 ? -1 : 1;
-            }
-            // if (index == 2) debugger;
-            const x = xCenter + xOff * dir * (width / 2);
-
-            const y = -330 - 80 * yOffSet;
-            const transformValue = `translateX(${x}px) translateY(${y}px)`;
-            return (
-              <MemoizedStyledSodaCard
-                key={soda._id}
-                soda={soda}
-                relativeIndex={relativeIndex}
-                listLength={listLength}
-                isSelected={index == selectedIndex}
-                selectedIndex={selectedIndex}
-                hudWidth={50}
-                index={index}
-                onSodaClick={() => handleSodaClick(sodaList, soda)}
-                randomColor={soda.randomColor}
-                onSodaDrag={handleDrag}
-                dragAmount={dragAmount}
-                setDragAmount={setDragAmount}
-                updateSelectedSoda={updateSelectedSoda}
-                opacity={opacityValue}
-                width={width}
-                transform={`${transformValue}`}
-              />
-            );
-          })}
-        </DndContext>
+        <DndContext>{sodaList?.map(generateSodaCard)}</DndContext>
       </SodaCarouselWrapper>
       <ArrowButton
         width={arrowWidth}
