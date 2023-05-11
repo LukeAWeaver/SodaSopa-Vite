@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Typography, Grid, Stack, Paper } from "@mui/material";
 
 import { RootState } from "@/store";
 import { spendCoin } from "@/store/itemSlice";
@@ -63,7 +64,13 @@ const VendingMachine: React.FC = () => {
   }, [data]);
 
   if (!selectedItem) {
-    return <>no selected item</>;
+    return (
+      <Paper elevation={5} sx={{ p: "10px", m: "1rem" }}>
+        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+          no selected item
+        </Typography>
+      </Paper>
+    );
   }
   const handlePurchaseButtonClick = () => {
     if (selectedItem.quantity < 1) {

@@ -31,6 +31,5 @@ export const getdraggedIndex = (
   const currentDrag = drag < dragLimit ? drag : dragLimit;
   const dragRatio = currentDrag / dragLimit; // 0 - 1 based on
   const draggedIndex = index + dragRatio * direction;
-
   return draggedIndex;
 };

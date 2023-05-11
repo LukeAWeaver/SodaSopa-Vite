@@ -6,6 +6,7 @@ import { setSelectedItem } from "@/store/itemSlice";
 import { Item } from "@/types/items";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
+import { Typography, Grid, Stack, Paper } from "@mui/material";
 
 const ItemListContainer = styled.div``;
 interface MasterKeyDisplayProps {
@@ -26,7 +27,13 @@ const ItemList: React.FC = () => {
     dispatch(setSelectedItem(item));
   };
   if (!selectedItem) {
-    return <>no selected item</>;
+    return (
+      <Paper elevation={5} sx={{ p: "10px", m: "1rem" }}>
+        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+          no selected item
+        </Typography>
+      </Paper>
+    );
   }
 
   return (

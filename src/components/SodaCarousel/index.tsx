@@ -204,6 +204,10 @@ const SodaCarousel: React.FC<SodaCarouselProps> = ({
         [dragAmount, hudWidth, index, listLength],
       );
       const draggedRelativeIndex = draggedIndex - selectedIndex;
+      if (relativeIndex == 0 && draggedRelativeIndex == 1) {
+        setSelectedIndex(index++);
+        setDragAmount(0);
+      }
 
       const yOffSet = getDeltaY(draggedIndex);
       const xOff = getDeltaX(draggedIndex) * 2;
