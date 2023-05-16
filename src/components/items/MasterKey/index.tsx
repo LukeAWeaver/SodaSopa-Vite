@@ -11,14 +11,14 @@ interface KeyDisplayProps {
 const KeyDisplay = styled.div`
   background-color: #ccc;
   padding: 1rem;
-  width: 100%;
-  height: 100%;
+  width: 2rem;
+  height: 2rem;
   cursor: pointer;
 `;
 
 const MasterKeyComponent: React.FC<KeyDisplayProps> = ({ onSelect }) => {
   const { inventory } = useSelector((state: RootState) => state.item);
-  
+
   const { masterKey } = inventory;
   const handleClick = () => {
     onSelect(masterKey);

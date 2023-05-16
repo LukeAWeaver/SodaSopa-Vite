@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Typography, Paper, Stack } from "@mui/material";
 
 const getNextInterval = () => {
   const now = new Date();
@@ -32,9 +33,16 @@ const DailyComponent: React.FC = () => {
   const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
 
   return (
-    <div>
-      Next Item Chest: {hours}h {minutes}m {seconds}s
-    </div>
+    <Paper elevation={2}>
+      <Stack direction={"column"}>
+        <Typography align="center" variant="body1">
+          Next loot crate in
+        </Typography>
+        <Typography align="center" variant="body2">
+          {hours}h {minutes}m {seconds}s
+        </Typography>
+      </Stack>
+    </Paper>
   );
 };
 

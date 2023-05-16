@@ -1,25 +1,12 @@
 import React from "react";
 import styled from "styled-components";
+import Button from "@mui/material/Button";
 
-const StyledAdminViewPanelButton = styled.button`
-  background-color: #ffaf50;
-  border: none;
+const StyledAdminViewPanelButton = styled(Button)`
   color: white;
-  text-align: center;
-  text-decoration: none;
-  font-size: 16px;
-  padding: 12px 24px;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.3s;
-
+  height: 3rem;
   &:hover {
-    background-color: #ffa049;
-  }
-
-  &:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+    background-color: darkblue;
   }
 `;
 
@@ -33,7 +20,12 @@ const AdminViewPanelButton: React.FC<AdminViewPanelButtonProps> = ({
   disabled,
 }) => {
   return (
-    <StyledAdminViewPanelButton onClick={onClick} disabled={disabled}>
+    <StyledAdminViewPanelButton
+      size="large"
+      variant="contained"
+      disabled={disabled}
+      onClick={onClick}
+    >
       [O]
     </StyledAdminViewPanelButton>
   );

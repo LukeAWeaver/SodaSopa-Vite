@@ -12,8 +12,8 @@ const CoinBagDisplay = styled.div`
   background-color: #654321; // dark brown color
   border-radius: 0 0 50% 50%; // create a semi-circular shape
   padding: 2rem;
-  width: 300px; // adjust width as needed
-  height: 250px; // adjust height as needed
+  width: 2rem; // adjust width as needed
+  height: 2rem; // adjust height as needed
   text-align: center;
   position: relative;
   cursor: pointer;

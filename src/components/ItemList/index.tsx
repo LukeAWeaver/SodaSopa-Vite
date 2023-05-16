@@ -8,19 +8,24 @@ import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { Typography, Grid, Stack, Paper } from "@mui/material";
 
-const ItemListContainer = styled.div``;
-interface MasterKeyDisplayProps {
-  selected: boolean;
-}
-const MasterKeyDisplay = styled(MasterKeyComponent)<MasterKeyDisplayProps>``;
+const ItemListContainer = styled(Stack)``;
 
-interface CoinDisplayProps {
+interface ItemListProps {
   selected: boolean;
 }
 
-const CoinBagDisplay = styled(CoinDisplayComponent)<CoinDisplayProps>``;
+const StyledCoinComponent = styled(CoinDisplayComponent)<ItemListProps>`
+  width: ${({ selected }) => {
+    return `${selected ? 4 : 2}rem`;
+  }};
+`;
+const StyledMasterKeyComponent = styled(MasterKeyComponent)<ItemListProps>`
+  width: ${({ selected }) => {
+    return `${selected ? 4 : 2}rem`;
+  }};
+`;
 
-const ItemList: React.FC = () => {
+const ItemList: React.FC = (selected) => {
   const { selectedItem } = useSelector((state: RootState) => state.item);
   const dispatch = useDispatch();
   const handleButtonClick = (item: Item) => {
@@ -37,7 +42,7 @@ const ItemList: React.FC = () => {
   }
 
   return (
-    <ItemListContainer>
+    <ItemListContainer spacing={2} direction={"row"}>
       <MasterKeyComponent onSelect={handleButtonClick} />
       <CoinDisplay onSelect={handleButtonClick} />
     </ItemListContainer>

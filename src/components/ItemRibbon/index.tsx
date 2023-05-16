@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { Typography, Paper, Stack } from "@mui/material";
 
 interface ItemRibbonProps {
   text: string;
@@ -8,7 +9,9 @@ interface ItemRibbonProps {
 const ItemRibbon: React.FC<ItemRibbonProps> = ({ text }) => {
   return (
     <ItemRibbonContainer>
-      <ItemRibbonText>{text}</ItemRibbonText>
+      <ItemRibbonText align="center" variant="body2">
+        {text}
+      </ItemRibbonText>
     </ItemRibbonContainer>
   );
 };
@@ -22,18 +25,12 @@ const ItemRibbonContainer = styled.div`
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
 `;
 
-const ItemRibbonText = styled.span`
+const ItemRibbonText = styled(Typography)`
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 160px;
-  height: 160px;
-  line-height: 160px;
-  font-size: 24px;
-  font-weight: bold;
-  text-align: center;
-  color: #fff;
+  width: 8rem;
 `;
 
 export default ItemRibbon;

@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Typography, Grid, Stack, Paper } from "@mui/material";
+import { Typography, Paper, Stack, CircularProgress } from "@mui/material";
 
 import { RootState } from "@/store";
 import { spendCoin } from "@/store/itemSlice";
@@ -20,14 +20,10 @@ import ErrorComponent from "@/components/ErrorComponent";
 import SodaCarousel from "@/components/SodaCarousel";
 import ItemRibbon from "@/components/ItemRibbon";
 
-import {
-  StyledDailyComponent,
-  StyledSwapComponent,
-  VendingMachineContainer,
-  StyledAdminViewPanelButton,
-  StyledPurchaseSodaButton,
-} from "./StyledComponents";
 import Logout from "../Logout";
+import { AdminViewPanelButton, PurchaseSodaButton } from "@/components/Button";
+import DailyComponent from "@/components/daily";
+import ItemList from "@/components/ItemList";
 
 const VendingMachine: React.FC = () => {
   const navigate = useNavigate();
@@ -118,7 +114,13 @@ const VendingMachine: React.FC = () => {
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <p>
+        Loading...
+        <CircularProgress />
+      </p>
+    );
   if (error) return <p>Error: {error?.message}</p>;
   if (filteredSodaList == undefined || filteredSodaList.length == 0) {
     triggerVendingMachineError("no soda list");
@@ -127,9 +129,7 @@ const VendingMachine: React.FC = () => {
     <>
       <ToastContainer />
       <Logout />
-      <VendingMachineContainer>
-        <ItemRibbon text={selectedItem.quantity + ""} key={selectedItem.name} />
-        <StyledDailyComponent />
+      <Stack spacing={2} direction="column">
         {isError ||
         filteredSodaList == undefined ||
         filteredSodaList.length == 0 ? (
@@ -141,10 +141,17 @@ const VendingMachine: React.FC = () => {
             listLength={filteredSodaList.length}
           />
         )}
-        <StyledPurchaseSodaButton onClick={handlePurchaseButtonClick} />
-        <StyledAdminViewPanelButton onClick={handleAdminViewButtonClick} />
-        <StyledSwapComponent selected={selectedItem.isMasterKey} />
-      </VendingMachineContainer>
+        <Stack direction="row" spacing={2}>
+          <DailyComponent />
+          <PurchaseSodaButton onClick={handlePurchaseButtonClick} />
+          <AdminViewPanelButton onClick={handleAdminViewButtonClick} />
+          <ItemList />
+          <ItemRibbon
+            text={selectedItem.name + " " + selectedItem.quantity.toString()}
+            key={selectedItem.name}
+          />
+        </Stack>
+      </Stack>
     </>
   );
 };

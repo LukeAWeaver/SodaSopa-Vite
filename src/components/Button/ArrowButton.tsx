@@ -1,14 +1,19 @@
 import React from "react";
 import styled from "styled-components";
+import Button from "@mui/material/Button";
 
 interface StyledArrowButtonProps {
   width: number;
 }
 
-const StyledArrowButton = styled.button<StyledArrowButtonProps>`
-  font-size: 1.5rem;
-  cursor: pointer;
+const StyledArrowButton = styled(Button)<StyledArrowButtonProps>`
+  color: white;
+  height: 3rem;
   width: ${({ width }) => `${width}px`};
+  background-color: cornflowerblue;
+  &:hover {
+    background-color: darkblue;
+  }
 `;
 
 interface ArrowButtonProps {
@@ -24,7 +29,12 @@ const ArrowButton: React.FC<ArrowButtonProps> = ({
 }) => {
   const arrow = direction == "left" ? <>&larr;</> : <>&rarr;</>;
   return (
-    <StyledArrowButton width={width} onClick={onClick}>
+    <StyledArrowButton
+      size="large"
+      variant="contained"
+      width={width}
+      onClick={onClick}
+    >
       {arrow}
     </StyledArrowButton>
   );

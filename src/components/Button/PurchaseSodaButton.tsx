@@ -1,25 +1,13 @@
 import React from "react";
 import styled from "styled-components";
+import Button from "@mui/material/Button";
 
-const StyledPurchaseButton = styled.button`
-  background-color: #4caf50;
-  border: none;
+const StyledPurchaseButton = styled(Button)`
   color: white;
-  text-align: center;
-  text-decoration: none;
-  font-size: 16px;
-  padding: 12px 24px;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.3s;
-
+  height: 3rem;
+  background-color: cornflowerblue;
   &:hover {
-    background-color: #45a049;
-  }
-
-  &:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+    background-color: darkblue;
   }
 `;
 
@@ -30,8 +18,13 @@ interface PurchaseButtonProps {
 
 const PurchaseSoda: React.FC<PurchaseButtonProps> = ({ onClick, disabled }) => {
   return (
-    <StyledPurchaseButton onClick={onClick} disabled={disabled}>
-      DISPENSE
+    <StyledPurchaseButton
+      size="large"
+      variant="contained"
+      onClick={onClick}
+      disabled={disabled}
+    >
+      BUY
     </StyledPurchaseButton>
   );
 };

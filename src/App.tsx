@@ -28,7 +28,7 @@ function App() {
           <Provider store={store}>
             <BrowserRouter>
               <Routes>
-                <Route path="/VendingMachine" element={<VendingMachine />} />
+                <Route path="/VendingMachine" element={<VendingMachine />} loader={undefined}/>
                 <Route
                   path="/VendingMachine/AdminPanel"
                   element={<AdminPanel />}
