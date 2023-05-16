@@ -1,6 +1,6 @@
-# Project Name
+# SodaSopa
 
-Project description goes here.
+Gamer's Vending Machine
 
 ![Project Architecture](docs/arch.png)
 
@@ -14,17 +14,13 @@ Project description goes here.
 
 ## Installation
 
-Instructions for installing the project and its dependencies.
+Be sure to configure this with your own Appsync Graphql endpoint and write your own lambdas
 
 ## Features
 
-- Feature 1: Description of feature 1.
-- Feature 2: Description of feature 2.
+- Feature 1: Purchasing Soda
+- Feature 2: Restocking Soda
 - ...
-
-## Contributing
-
-Guidelines for contributing to the project. Include information about how to submit bug reports, suggest enhancements, and contribute code.
 
 ## License
 
