@@ -8,8 +8,7 @@ A modern, responsive web application built with **Vite**, **React**, **MUI**, **
 
 ## 🚀 Features
 
-- 🔐 **Authentication** with Google OAuth
-- 🔗 **GraphQL API integration** using Apollo Client
+- 🔐 **Authentication** with Google OAuth (`@react-oauth/google`)
 - 🔥 **State management** with Redux Toolkit
 - 🎨 **UI Frameworks:**  
   Material UI (MUI) + Emotion, Styled-components
@@ -18,6 +17,7 @@ A modern, responsive web application built with **Vite**, **React**, **MUI**, **
 - 🚥 **Routing** with React Router
 - 🔔 **UI Enhancements:** Toast notifications (React Toastify), modals, and confirmations
 - ⚡ **Fast bundling and development** using Vite + TypeScript
+- ☁️ **CI/CD pipeline with GitHub Actions for deployment to AWS S3**
 
 ---
 
@@ -29,22 +29,14 @@ A modern, responsive web application built with **Vite**, **React**, **MUI**, **
 | **Styling**         | MUI, Emotion, Styled-components                        |
 | **State Management**| Redux Toolkit                                          |
 | **Authentication**  | Google OAuth (via @react-oauth/google)                 |
-| **API**             | GraphQL (Apollo Client)                                |
 | **Routing**         | React Router                                           |
 | **UX Interactions** | dnd-kit (Drag & Drop), @use-gesture/react              |
-| **Visualization/UI**| React Toastify (notifications), MUI components         |
+| **UI Components**   | React Toastify (notifications), MUI components         |
 | **Tooling**         | TypeScript, ESLint, Prettier, Vite, Jest               |
 | **Testing**         | React Testing Library, Jest                            |
+| **Cloud/Deployment**| AWS S3 (static hosting), GitHub Actions (CI/CD)        |
 
 ![Project Architecture](docs/arch.png)
-
-## Table of Contents
-
-- [Installation](#installation)
-- [Usage](#usage)
-- [Features](#features)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Installation
 
